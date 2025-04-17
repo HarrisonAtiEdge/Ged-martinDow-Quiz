@@ -1,0 +1,1369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MartinDow Quiz Game</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
+    <style>
+
+@font-face {
+    font-family: LuckiestGuy Regular;
+    src:  url("LuckiestGuy-Regular.ttf")  format("truetype");
+}
+@font-face {
+    font-family: Poppins Regular;
+    src:  url("Poppins-Regular.ttf")  format("truetype");
+}
+        * {
+            font-family: 'Poppins Regular';
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            overflow: hidden;
+        }
+
+        .screen {
+            width: 100vw;
+            height: 100vh;
+            background-size: cover;
+            background-position: center;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+            position: relative;
+        }
+
+        #splash-screen {
+            display: flex;
+            background-image: url('/quizImages/splash.webp');
+        }
+
+        #home-screen {
+            display: flex;
+            background-image: url('/quizImages/splash.webp');
+        }
+
+        #main-screen {
+            background-image: url('/quizImages/Inhidex-Laxoberon.webp');
+        }
+
+        #game1-screen {
+            background-image: url('/quizImages/InhidexQuestion.webp');
+        }
+
+        #pre-game1-screen {
+            background-image: url('quizImages/Inhidex.webp');
+        }
+
+        #pre-game2-screen {
+            background-image: url('quizImages/Laxoberon.webp');
+        }
+
+        #game2-screen {
+            background-image: url('/quizImages/LaxoberonQuestion.webp');
+        }
+#results1-screen {
+            background-image: url('/quizImages/InhidexQuestion.webp');
+        }
+#results2-screen {
+            background-image: url('/quizImages/LaxoberonQuestion.webp');
+        }
+        .navbar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .btn {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 12px 24px;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            margin: 10px;
+            backdrop-filter: blur(5px);
+        }
+
+        .btn:hover {
+            background-color: rgba(255, 255, 255, 0.4);
+            transform: scale(1.05);
+        }
+
+        .game-container {
+            background: linear-gradient(135deg, #4c84ff 0%, #00165e 100%);
+            padding: 30px;
+            border-radius: 15px;
+            width: 50%;
+            max-width: 800px;
+            backdrop-filter: blur(10px);
+        }
+
+        .game-title {
+            font-size: 36px;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        .game-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .timer {
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+        }
+
+        .timer-bar {
+            width: 200px;
+            height: 10px;
+            background-color: #444;
+            border-radius: 5px;
+            margin-left: 10px;
+            overflow: hidden;
+        }
+
+        .timer-progress {
+            height: 100%;
+            width: 100%;
+            background-color: #4CAF50;
+            border-radius: 5px;
+            transition: width 1s linear;
+        }
+
+        /* New quiz layout styles */
+        .quiz-container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            padding: 20px;
+            align-items: center;
+            justify-content: center;
+            gap: 5vw;
+        }
+
+        .question-panel {
+            width: 40%;
+            height: 400px;
+            background: linear-gradient(135deg, #4c84ff 0%, #00165e 100%);
+            border-radius: 4vw;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            margin-right: 20px;
+        }
+        .question-panel2 {
+            width: 40%;
+            height: 400px;
+            background: linear-gradient(to right, #c1e62d, #0ca128);
+            border-radius: 4vw;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            margin-right: 20px;
+        }
+
+        .question-number span,.question-number {
+            font-family: 'LuckiestGuy Regular';
+  font-size: 3rem;
+  top: 15px;
+  left: 15px;
+  width: 30px;
+  height: 30px;
+  align-self: center;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 800;
+  color: #e07800;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-color: white;
+        }
+        .question-number2 span,.question-number2 {
+            font-family: 'LuckiestGuy Regular';
+  font-size: 3rem;
+  top: 15px;
+  left: 15px;
+  width: 30px;
+  height: 30px;
+  align-self: center;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 800;
+  color: #0ca128;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-color: rgb(1, 0, 13);
+        }
+
+        .question-text {
+            font-size: 28px;
+            font-weight: bold;
+            margin-top: 20px;
+            line-height: 1.4;
+        }
+
+        .options-panel {
+            width: 50%;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .option-btn {
+            background: linear-gradient(90deg, #4c84ff 0%, #00165e 100%);
+            color: white;
+            border: none;
+            border-radius: 4vw;
+            padding: 20px;
+            font-size: 18px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+        .option-btn2 {
+            background: linear-gradient(to right, #c1e62d, #0ca128);
+            color: white;
+            border: none;
+            border-radius: 4vw;
+            padding: 20px;
+            font-size: 18px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .option-btn:hover {
+            transform: translateX(10px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .option-letter {
+            background-color: rgba(255, 255, 255, 0.2);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-weight: bold;
+        }
+
+        .option-btn.correct {
+            background: linear-gradient(90deg, #4CAF50 0%, #2E7D32 100%);
+            animation: correctAnimation 0.8s ease;
+        }
+
+        .option-btn.incorrect {
+            background: linear-gradient(90deg, #F44336 0%, #B71C1C 100%);
+            animation: incorrectAnimation 0.8s ease;
+        }
+
+        .option-btn2.correct {
+            background: linear-gradient(90deg, #4CAF50 0%, #2E7D32 100%);
+            animation: correctAnimation 0.8s ease;
+        }
+
+        .option-btn2.incorrect {
+            background: linear-gradient(90deg, #F44336 0%, #B71C1C 100%);
+            animation: incorrectAnimation 0.8s ease;
+        }
+
+        .game-controls {
+            position: absolute;
+            bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            width: 90%;
+        }
+
+        .game-info-bar,
+        .game-info-bar2 {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 20px;
+        }
+
+        .info-item {
+            /* background-color: rgb(0 0 0 / 22%); */
+            padding: 10px 20px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .results-container {
+            width: 50%;
+            max-width: 1000px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .results-summary {
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .results-table-container {
+            display: none;
+        }
+
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            color: white;
+            text-align: left;
+        }
+
+        .results-table th, 
+        .results-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .results-table th {
+            background-color: rgba(0, 0, 0, 0.3);
+            position: sticky;
+            top: 0;
+        }
+
+        .results-table tbody tr:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .result-correct {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+
+        .result-incorrect {
+            color: #F44336;
+            font-weight: bold;
+        }
+
+        @keyframes correctAnimation {
+            0% { transform: translateX(0); }
+            50% { transform: translateX(10px); background: linear-gradient(90deg, #4CAF50 0%, #2E7D32 100%); }
+            100% { transform: translateX(0); background: linear-gradient(90deg, #4CAF50 0%, #2E7D32 100%); }
+        }
+
+        @keyframes incorrectAnimation {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-5px); background: linear-gradient(90deg, #F44336 0%, #B71C1C 100%); }
+            50% { transform: translateX(5px); background: linear-gradient(90deg, #F44336 0%, #B71C1C 100%); }
+            75% { transform: translateX(-5px); background: linear-gradient(90deg, #F44336 0%, #B71C1C 100%); }
+            100% { transform: translateX(0); background: linear-gradient(90deg, #F44336 0%, #B71C1C 100%); }
+        }
+
+        .game-buttons {
+            display: flex;
+            justify-content: center;
+            margin-top: -40px;
+        }
+
+        .home-content {
+            max-width: 600px;
+        }
+
+        h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        p {
+            font-size: 4vw;
+            margin-bottom: 30px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+        .game-info-bar1{
+            display: none;
+        }
+        .game-info-bar2{
+            /* display: none; */
+        }
+
+
+        .question-icon {
+    font-family: 'LuckiestGuy Regular';
+    position: absolute;
+    top: -3vw;
+    left: -3vw;
+    background-color: #f59e0b;
+    color: #3232fd;
+    width: 7vw;
+    height: 7vw;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 6vw;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+        .question-icon2 {
+    font-family: 'LuckiestGuy Regular';
+    position: absolute;
+    top: -3vw;
+    left: -3vw;
+    background: linear-gradient(to right, #c1e62d, #0ca128);
+    color: white;
+    width: 7vw;
+    height: 7vw;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 6vw;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+.game-info-bar2{
+    display: none;
+}
+
+
+
+
+
+/* ==========wasif========= */
+
+.btn-start {
+            /* background-color: rgba(255, 255, 255, 0.2); */
+            color: black;
+            background-color: #fff;
+            border: 2px solid white;
+            padding: 10px 44px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            cursor: pointer;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            /* margin: 10px; */
+            margin-top: 45vh;
+            backdrop-filter: blur(5px);
+        }
+
+        /* .btn:hover {
+            background-color: rgba(255, 255, 255, 0.4);
+            transform: scale(1.05);
+        } */
+
+        .logo-select-one {
+            border-radius: 3rem;
+            font-size: 2vw;
+            padding: 1vw 3vw;
+            border: none;
+            box-shadow: 5px 5px 4px #cce4ec;
+            /* font-size: 1.5rem; */
+            font-weight: 700;
+            background-color: white;
+            /* width: 30vw; */
+            color: black;
+
+        }
+
+        .main-div {
+            /* margin-top: 2vw; */
+            margin-top: -15rem;
+            display: flex;
+            /* flex-direction: column; */
+            justify-content: center;
+            align-items: center;
+            /* height: 100vh; */
+            /* gap: 23vw; */
+            gap: 20vw;
+        }
+
+        .styled-button {
+            background-color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 3rem;
+            /* box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2); */
+            cursor: pointer;
+        }
+
+        .gradient-text-1 {
+            background-image: linear-gradient(to right, rgb(36, 65, 255), rgb(255, 166, 0));
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+            font-size: 1.5rem;
+        }
+
+        .gradient-text-2 {
+            background-image: linear-gradient(to right, #c1e62d, #0ca128);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+            font-size: 1.5rem;
+        }
+
+        .pre-game1-btn {
+            border-radius: 5rem;
+            font-size: 2vw;
+            padding: 1vw 9vw;
+            border: none;
+            background: linear-gradient(to right, rgb(36, 65, 255), rgb(255, 166, 0));
+            font-size: 4rem;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .pre-game2-btn{
+            border-radius: 5rem;
+            font-size: 2vw;
+            padding: 1vw 5vw;
+            border: none;
+            background: linear-gradient(to right, #c1e62d, #0ca128);
+            font-size: 3rem;
+            font-weight: 800;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <!-- Splash Screen
+    <div id="splash-screen" class="screen">
+        <div class="navbar">
+            <div class="logo">QuizMaster</div>
+        </div>
+        <div class="home-content">
+            <h1>Welcome to QuizMaster</h1>
+            <p>Test</p>
+            <button id="splash-start-btn" class="btn">Start Quiz</button>
+        </div>
+    </div>
+
+    Home Screen
+    <div id="home-screen" class="screen">
+        <div class="navbar">
+            <div class="logo">QuizMaster</div>
+        </div>
+        <div class="home-content">
+            <h1>Welcome to QuizMaster</h1>
+            <p>Test your knowledge with our exciting quiz games. Click start to begin your journey!</p>
+            <button id="start-btn" class="btn">Start Quiz</button>
+        </div>
+    </div>
+
+    Main Screen (Game Selection)
+    <div id="main-screen" class="screen">
+        <div class="navbar">
+            <div class="logo">QuizMaster</div>
+        </div>
+        <div class="game-container">
+            <h2 class="game-title">Choose Your Quiz</h2>
+            <p>Select one of our exciting quiz games to test your knowledge</p>
+            <div class="game-buttons">
+                <button id="game1-btn" class="btn">General Knowledge</button>
+                <button id="game2-btn" class="btn">Science Quiz</button>
+            </div>
+        </div>
+    </div> -->
+
+
+
+<!-- Splash Screen -->
+    <!-- <div id="splash-screen" class="screen">
+        <div class="navbar">
+            <div class="logo">QuizMaster</div>
+        </div>
+        <div class="home-content">
+            <h1>Welcome to QuizMaster</h1>
+            <p>Test</p>
+            <button id="splash-Start-btn" class="btn">Start Quiz</button>
+        </div>
+    </div>
+     -->
+
+    <!-- Home Screen -->
+    <div id="splash-screen" class="screen">
+        <!-- <div class="navbar">
+        <div class="logo">QuizMaster</div>
+    </div> -->
+        <div class="splash-content">
+            <!-- <h1>Splash-screen of QuizMaster</h1>
+        <p>Click start to begin your journey!</p> -->
+            <button id="splash-Start-btn" class="btn btn-start">START </button>
+        </div>
+    </div>
+
+
+    <!-- Home Screen -->
+    <!-- <div id="home-screen" class="screen">
+        <div class="navbar">
+            <div class="logo">QuizMaster</div>
+        </div>
+        <div class="home-content">
+            <h1>Welcome to QuizMaster</h1>
+            <p>Test your knowledge with our exciting quiz games. Click start to begin your journey!</p>
+            <button id="start-btn" class="btn">Start Quiz</button>
+        </div>
+    </div> -->
+
+    <div id="home-screen" class="screen">
+        <!-- <div class="navbar">
+            <div class="logo">QuizMaster</div>
+        </div> -->
+        <div class="home-content">
+            <!-- <h1>Welcome to QuizMaster</h1>
+            <p>Test your knowledge with our exciting quiz games. Click start to begin your journey!</p> -->
+            <button id="start-btn" class="btn btn-start">START</button>
+        </div>
+    </div>
+
+    <!-- Main Screen (Game Selection) -->
+    <!-- <div id="main-screen" class="screen">
+        <div class="navbar">
+            <div class="logo">QuizMaster</div>
+        </div>
+        <div class="game-container">
+            <h2 class="game-title">Choose Your Quiz</h2>
+            <p>Select one of our exciting quiz games to test your knowledge</p>
+            <div class="game-buttons">
+                <button id="pregame1-btn" class="btn">General Knowledge</button>
+                <button id="pregame2-btn" class="btn">Science Quiz</button>
+            </div>
+        </div>
+    </div> -->
+    <div id="main-screen" class="screen">
+        <div class="navbar">
+            <div class="logo logo-select-one">SELECT ONE</div>
+        </div>
+
+        <div class="main-div ">
+            <!-- <h2 class="game-title">Choose Your Quiz</h2>
+            <p>Select one of our exciting quiz games to test your knowledge</p> -->
+            <!-- <div class="game-buttons">
+                <button id="game1-btn" class="btn">GERD</button>
+                <button id="game2-btn" class="btn"> CONSTIPATION</button>
+            </div> -->
+            <button id="pregame1-btn" class="styled-button">
+                <span class="gradient-text-1">
+                    GERD
+                </span>
+            </button>
+            <button id="pregame2-btn" class="styled-button">
+                <span class="gradient-text-2">
+                    CONSTIPATION
+                </span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Pre Game 1 Screen -->
+    <!-- <div id="pre-game1-screen" class="screen">
+        <div class="navbar">
+            <div class="logo">QuizMaster</div>
+        </div>
+        <div class="game-container">
+            <h2 class="game-title">Pre Game 1 </h2>
+            <p>pre Game 2 content</p>
+            <div class="game-buttons">
+                <button id="game1-btn" class="btn">General Knowledge</button>
+            </div>
+        </div>
+    </div> -->
+
+
+    <div id="pre-game1-screen" class="screen">
+        <!-- <div class="navbar">
+            <div class="logo">QuizMaster</div>
+        </div> -->
+        <div class="game-buttons">
+            <button id="game1-btn" class="pre-game1-btn">GERD</button>
+        </div>
+
+    </div>
+
+ 
+    <div id="pre-game2-screen" class="screen">
+        <div class="game-buttons" style="margin-top: -100px;">
+            <button id="game2-btn" class="pre-game2-btn">CONSTIPATION</button>
+        </div>
+
+    </div>
+
+
+    <!-- Game 1 Screen -->
+    <div id="game1-screen" class="screen">
+        <div class="navbar">
+            <div class="logo">
+                <div class="info-item">
+                    <span>Time:</span>
+                    <span id="time1">10</span>s
+                    <div class="timer-bar">
+                        <div id="timer-progress1" class="timer-progress"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="game-info-bar1">
+            <div class="info-item">
+                <span>Question:</span>
+                <span id="current-question1">1</span>/<span id="total-questions1">10</span>
+            </div>
+            <div class="info-item">
+                <span>Score:</span>
+                <span id="score1">0</span>
+            </div>
+           
+        </div>
+        
+        <div class="quiz-container">
+            <div class="question-panel">
+                <div class="question-icon">?</div>
+                <div class="question-number">Q<span id="question-num1">1</span></div>
+                <div id="question1" class="question-text">Loading question...</div>
+            </div>
+            
+            <div class="options-panel" id="options1"></div>
+
+            
+        </div>
+        
+        <div class="game-controls">
+            <button id="back-to-main1" class="btn">Back to Menu</button>
+        </div>
+    </div>
+
+
+
+
+
+
+    <!-- Game 2 Screen -->
+    <div id="game2-screen" class="screen">
+        <div class="navbar">
+            <div class="logo">
+                <div class="info-item">
+                    <span>Time:</span>
+                    <span id="time2">10</span>s
+                    <div class="timer-bar">
+                        <div id="timer-progress2" class="timer-progress"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="game-info-bar2">
+            <div class="info-item">
+                <span>Question:</span>
+                <span id="current-question2">1</span>/<span id="total-questions2">10</span>
+            </div>
+            <div class="info-item">
+                <span>Score:</span>
+                <span id="score2">0</span>
+            </div>
+           
+        </div>
+        
+        <div class="quiz-container">
+            <div class="question-panel2">
+                <div class="question-icon2">?</div>
+                <div class="question-number2">Q<span id="question-num2">1</span></div>
+                <div id="question2" class="question-text">Loading question...</div>
+            </div>
+            
+            <div class="options-panel" id="options2"></div>
+        </div>
+        
+        <div class="game-controls">
+            <button id="back-to-main2" class="btn">Back to Menu</button>
+        </div>
+    </div>
+
+    <!-- Game 1 Results Screen -->
+    <div id="results1-screen" class="screen">
+        <div class="navbar">
+            
+        </div>
+        <div class="game-container results-container">
+            
+            <div class="results-summary">
+                <p>Your Score: <span id="final-score1">0</span>/<span id="final-total1">10</span></p>
+            </div>
+            <div class="results-table-container">
+                <table id="results-table1" class="results-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Question</th>
+                            <th>Your Answer</th>
+                            <th>Correct Answer</th>
+                            <th>Result</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Results will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="game-buttons">
+                <button id="back-from-results1" class="btn">Try Again</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game 2 Results Screen -->
+    <div id="results2-screen" class="screen">
+        <div class="navbar">
+            
+        </div>
+        <div class="game-container results-container" style=" background: linear-gradient(to right, #c1e62d, #0ca128);">
+            
+            <div class="results-summary">
+                <p>Your Score: <span id="final-score2">0</span>/<span id="final-total2">10</span></p>
+            </div>
+            <div class="results-table-container" >
+                <table id="results-table2" class="results-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Question</th>
+                            <th>Your Answer</th>
+                            <th>Correct Answer</th>
+                            <th>Result</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Results will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="game-buttons">
+                <button id="back-from-results2" class="btn">Try Again</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        // DOM Elements
+        const splashScreen = document.getElementById('splash-screen');
+        const splashStartBtn = document.getElementById('splash-Start-btn');
+        const homeScreen = document.getElementById('home-screen');
+        const mainScreen = document.getElementById('main-screen');
+        const preGame1Screen = document.getElementById('pre-game1-screen');
+        const preGame2Screen = document.getElementById('pre-game2-screen');
+        const game1Screen = document.getElementById('game1-screen');
+        const game2Screen = document.getElementById('game2-screen');
+
+        // buttons ids
+        const startBtn = document.getElementById('start-btn');
+        const preGame1Btn = document.getElementById('pregame1-btn');
+        const preGame2Btn = document.getElementById('pregame2-btn');
+        const game1Btn = document.getElementById('game1-btn');
+        const game2Btn = document.getElementById('game2-btn');
+        const backToMain1 = document.getElementById('back-to-main1');
+        const backToMain2 = document.getElementById('back-to-main2');
+        // Quiz Data
+        const generalKnowledgeQuestions = [
+  {
+    question: "CHRONIC UNTREATED GERD CAN LEAD TO WHICH OF THE FOLLOWING COMPLICATIONS?",
+    options: ["GALLSTONES", "BARRETT'S ESOPHAGUS", "ULCERATIVE COLITIS", "PEPTIC ULCER DISEASE"],
+    answer: 1
+  },
+  {
+    question: "WHAT IS UNIQUE ABOUT THE FORMULATION OF INHIDEX (DEXLANSOPRAZOLE)?",
+    options: ["IT IS TAKEN SUBLINGUALLY", "IT HAS A DUAL DELAYED-RELEASE SYSTEM", "IT REQUIRES REFRIGERATION", "IT CONTAINS BOTH AN ANTACID AND H2 BLOCKER"],
+    answer: 1
+  },
+  {
+    question: "INHIDEX (DEXLANSOPRAZOLE) ENSURES CARDIAC SAFETY",
+    options: ["TRUE", "FALSE"],
+    answer: 0
+  },
+  {
+    question: "INHIDEX (DEXLANSOPRAZOLE) CAN BE TAKEN",
+    options: ["WITH FOOD", "WITHOUT FOOD", "WITH OR WITHOUT FOOD"],
+    answer: 2
+  },
+  {
+    question: "INHIDEX (DEXLANSOPRAZOLE) CAPSULES ARE CONSIDERED EQUIVALENT TO THE INNOVATOR DUE TO THE COMPARATIVE DISSOLUTION PROFILE (CDP)",
+    options: ["TRUE", "FALSE"],
+    answer: 0
+  }
+];
+
+
+        
+const scienceQuestions = [
+  {
+    question: "CONSTIPATION IS THE PASSAGE OF SMALL AMOUNTS OF HARD, DRY BOWEL MOVEMENTS?",
+    options: [
+      "USUALLY FEWER THAN THREE TIMES A WEEK",
+      "STRAINING TO PASS STOOL 25% OF TIME",
+      "LUMPY OR HARD STOOLS 25% OF TIME",
+      "INCOMPLETE SENSATION OF EVACUATION 25% OF TIME",
+      "ALL OF THE ABOVE"
+    ],
+    answer: 4
+  },
+  {
+    question: "LAXOBERON (SODIUM PICOSULFATE) IS?",
+    options: [
+      "OSMOTIC LAXATIVE",
+      "STIMULANT LAXATIVE",
+      "BULK-FORMING LAXATIVE"
+    ],
+    answer: 1
+  },
+  {
+    question: "THE ONSET OF ACTION FOR LAXOBERON (SODIUM PICOSULFATE) IS",
+    options: [
+      "PREDICTABLE (6 – 12 HOURS)",
+      "UNPREDICTABLE (24 – 48 HOURS)",
+      "UNKNOWN"
+    ],
+    answer: 0
+  },
+  {
+    question: "THE ONSET OF ACTION FOR OSMOTIC LAXATIVE (LACTULOSE)",
+    options: [
+      "PREDICTABLE (6 – 12 HOURS)",
+      "UNPREDICTABLE (24 – 48 HOURS)"
+    ],
+    answer: 1
+  },
+  {
+    question: "SELECT THAT IS TRUE",
+    options: [
+      "LAXOBERON (SODIUM PICOSULFATE) IS THE DRUG OF CHOICE DURING PREGNANCY (2ND & 3RD TRIMESTER)",
+      "LAXOBERON (SODIUM PICOSULFATE) DOES NOT CAUSE HYPONATREMIA BEFORE COLONOSCOPY",
+      "LAXOBERON (SODIUM PICOSULFATE) DOES NOT INDUCE ELECTROLYTE IMBALANCE",
+      "ALL OF THE ABOVE"
+    ],
+    answer: 3
+  }
+];
+
+        
+       
+        // Game Variables
+        let currentQuestionIndex1 = 0;
+        let currentQuestionIndex2 = 0;
+        let score1 = 0;
+        let score2 = 0;
+        let timer1;
+        let timer2;
+        let timeLeft1 = 10;
+        let timeLeft2 = 10;
+
+        let userAnswers1 = [];
+        let userAnswers2 = [];
+        const results1Screen = document.getElementById('results1-screen');
+        const results2Screen = document.getElementById('results2-screen');
+        const backFromResults1 = document.getElementById('back-from-results1');
+        const backFromResults2 = document.getElementById('back-from-results2');
+
+        // Functions to toggle fullscreen
+        function openFullscreen() {
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen();
+            } else if (document.documentElement.webkitRequestFullscreen) { /* Safari */
+                document.documentElement.webkitRequestFullscreen();
+            } else if (document.documentElement.msRequestFullscreen) { /* IE11 */
+                document.documentElement.msRequestFullscreen();
+            }
+        }
+
+        function closeFullscreen() {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) { /* Safari */
+                document.webkitExitFullscreen();
+            } else if (document.msExitFullscreen) { /* IE11 */
+                document.msExitFullscreen();
+            }
+        }
+
+        // Navigation Functions
+      
+       function showScreen(screen) {
+            splashScreen.style.display = 'none';
+            homeScreen.style.display = 'none';
+            mainScreen.style.display = 'none';
+            preGame1Screen.style.display = 'none';
+            preGame2Screen.style.display = 'none'
+            game1Screen.style.display = 'none';
+            game2Screen.style.display = 'none';
+            results1Screen.style.display = 'none';
+            results2Screen.style.display = 'none';
+
+            screen.style.display = 'flex';
+        }
+
+        // Game 1 Functions
+        function startGame1() {
+            currentQuestionIndex1 = 0;
+            score1 = 0;
+            userAnswers1 = [];
+            document.getElementById('score1').textContent = score1;
+            document.getElementById('total-questions1').textContent = generalKnowledgeQuestions.length;
+            loadQuestion1();
+            showScreen(game1Screen);
+        }
+
+        function loadQuestion1() {
+    const question = generalKnowledgeQuestions[currentQuestionIndex1];
+    document.getElementById('current-question1').textContent = currentQuestionIndex1 + 1;
+    document.getElementById('question-num1').textContent = currentQuestionIndex1 + 1;
+    document.getElementById('question1').textContent = question.question;
+
+    const optionsContainer = document.getElementById('options1');
+    optionsContainer.innerHTML = ''; // Clear previous options
+
+    const optionLetters = ['A', 'B', 'C', 'D', 'E', 'F']; // You can expand this if needed
+
+    question.options.forEach((optionText, index) => {
+        const button = document.createElement('button');
+        button.className = 'option-btn';
+        button.setAttribute('data-index', index);
+
+        button.innerHTML = `
+            <span class="option-letter">${optionLetters[index] || ''}</span>
+            <span class="option-text">${optionText}</span>
+        `;
+
+        button.onclick = () => selectAnswer1(index);
+
+        optionsContainer.appendChild(button);
+    });
+
+    // Reset and start timer
+    timeLeft1 = 10;
+    document.getElementById('time1').textContent = timeLeft1;
+    document.getElementById('timer-progress1').style.width = '100%';
+
+    clearInterval(timer1);
+    timer1 = setInterval(updateTimer1, 1000);
+}
+
+        function updateTimer1() {
+            timeLeft1--;
+            document.getElementById('time1').textContent = timeLeft1;
+            const percentage = (timeLeft1 / 10) * 100;
+            document.getElementById('timer-progress1').style.width = percentage + '%';
+            
+            if (timeLeft1 <= 0) {
+                clearInterval(timer1);
+                nextQuestion1();
+            }
+        }
+
+        function selectAnswer1(selectedIndex) {
+            clearInterval(timer1);
+            
+            const question = generalKnowledgeQuestions[currentQuestionIndex1];
+            const optionsContainer = document.getElementById('options1');
+            const optionElements = optionsContainer.querySelectorAll('.option-btn');
+            
+            // Track user answer
+            userAnswers1.push({
+                question: question.question,
+                userAnswer: selectedIndex,
+                correctAnswer: question.answer
+            });
+            
+            // Show correct and incorrect answers with animations
+            optionElements[question.answer].classList.add('correct');
+            
+            if (selectedIndex !== question.answer) {
+                optionElements[selectedIndex].classList.add('incorrect');
+            } else {
+                score1++;
+                document.getElementById('score1').textContent = score1;
+            }
+            
+            // Disable all options
+            optionElements.forEach(option => {
+                option.onclick = null;
+            });
+            
+            // Move to next question after 2 seconds
+            setTimeout(nextQuestion1, 2000);
+        }
+
+        function nextQuestion1() {
+            currentQuestionIndex1++;
+            
+            if (currentQuestionIndex1 < generalKnowledgeQuestions.length) {
+                loadQuestion1();
+            } else {
+                // End of game - show results
+                showResults1();
+            }
+        }
+
+        function showResults1() {
+            document.getElementById('final-score1').textContent = score1;
+            document.getElementById('final-total1').textContent = generalKnowledgeQuestions.length;
+            
+            const tableBody = document.querySelector('#results-table1 tbody');
+            tableBody.innerHTML = '';
+            
+            userAnswers1.forEach((answer, index) => {
+                const row = document.createElement('tr');
+                
+                const isCorrect = answer.userAnswer === answer.correctAnswer;
+                const resultText = isCorrect ? 'Correct' : 'Incorrect';
+                const resultClass = isCorrect ? 'result-correct' : 'result-incorrect';
+                
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${answer.question}</td>
+                    <td>${generalKnowledgeQuestions[index].options[answer.userAnswer]}</td>
+                    <td>${generalKnowledgeQuestions[index].options[answer.correctAnswer]}</td>
+                    <td class="${resultClass}">${resultText}</td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+            
+            showScreen(results1Screen);
+            triggerConfetti()
+        }
+
+        // Game 2 Functions
+        function startGame2() {
+            currentQuestionIndex2 = 0;
+            score2 = 0;
+            userAnswers2 = [];
+            document.getElementById('score2').textContent = score2;
+            document.getElementById('total-questions2').textContent = scienceQuestions.length;
+            loadQuestion2();
+            showScreen(game2Screen);
+        }
+
+        function loadQuestion2() {
+    const question = scienceQuestions[currentQuestionIndex2];
+    document.getElementById('current-question2').textContent = currentQuestionIndex2 + 1;
+    document.getElementById('question-num2').textContent = currentQuestionIndex2 + 1;
+    document.getElementById('question2').textContent = question.question;
+
+    const optionsContainer = document.getElementById('options2');
+    optionsContainer.innerHTML = ''; // Clear previous options
+
+    const optionLetters = ['A', 'B', 'C', 'D', 'E', 'F']; // Extend if needed
+
+    question.options.forEach((optionText, index) => {
+        const button = document.createElement('button');
+        button.className = 'option-btn2';
+        button.setAttribute('data-index', index);
+
+        button.innerHTML = `
+            <span class="option-letter">${optionLetters[index] || ''}</span>
+            <span class="option-text">${optionText}</span>
+        `;
+
+        button.onclick = () => selectAnswer2(index);
+        optionsContainer.appendChild(button);
+    });
+
+    // Reset and start timer
+    timeLeft2 = 10;
+    document.getElementById('time2').textContent = timeLeft2;
+    document.getElementById('timer-progress2').style.width = '100%';
+
+    clearInterval(timer2);
+    timer2 = setInterval(updateTimer2, 1000);
+}
+
+        function updateTimer2() {
+            timeLeft2--;
+            document.getElementById('time2').textContent = timeLeft2;
+            const percentage = (timeLeft2 / 10) * 100;
+            document.getElementById('timer-progress2').style.width = percentage + '%';
+            
+            if (timeLeft2 <= 0) {
+                clearInterval(timer2);
+                nextQuestion2();
+            }
+        }
+
+        function selectAnswer2(selectedIndex) {
+            clearInterval(timer2);
+            
+            const question = scienceQuestions[currentQuestionIndex2];
+            const optionsContainer = document.getElementById('options2');
+            const optionElements = optionsContainer.querySelectorAll('.option-btn2');
+            
+            // Track user answer
+            userAnswers2.push({
+                question: question.question,
+                userAnswer: selectedIndex,
+                correctAnswer: question.answer
+            });
+            
+            // Show correct and incorrect answers with animations
+            optionElements[question.answer].classList.add('correct');
+            
+            if (selectedIndex !== question.answer) {
+                optionElements[selectedIndex].classList.add('incorrect');
+            } else {
+                score2++;
+                document.getElementById('score2').textContent = score2;
+            }
+            
+            // Disable all options
+            optionElements.forEach(option => {
+                option.onclick = null;
+            });
+            
+            // Move to next question after 2 seconds
+            setTimeout(nextQuestion2, 2000);
+        }
+
+        function nextQuestion2() {
+            currentQuestionIndex2++;
+            
+            if (currentQuestionIndex2 < scienceQuestions.length) {
+                loadQuestion2();
+            } else {
+                // End of game - show results
+                showResults2();
+            }
+        }
+
+        function showResults2() {
+            document.getElementById('final-score2').textContent = score2;
+            document.getElementById('final-total2').textContent = scienceQuestions.length;
+            
+            const tableBody = document.querySelector('#results-table2 tbody');
+            tableBody.innerHTML = '';
+            
+            userAnswers2.forEach((answer, index) => {
+                const row = document.createElement('tr');
+                
+                const isCorrect = answer.userAnswer === answer.correctAnswer;
+                const resultText = isCorrect ? 'Correct' : 'Incorrect';
+                const resultClass = isCorrect ? 'result-correct' : 'result-incorrect';
+                
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${answer.question}</td>
+                    <td>${scienceQuestions[index].options[answer.userAnswer]}</td>
+                    <td>${scienceQuestions[index].options[answer.correctAnswer]}</td>
+                    <td class="${resultClass}">${resultText}</td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+            
+            showScreen(results2Screen);
+            triggerConfetti()
+        }
+
+        // Event Listeners
+        splashStartBtn.addEventListener('click', () => {
+            openFullscreen();
+            showScreen(homeScreen);
+        });
+
+        startBtn.addEventListener('click', () => {
+            openFullscreen();
+            showScreen(mainScreen);
+        });
+
+        preGame1Btn.addEventListener('click', () => {
+            openFullscreen();
+            showScreen(preGame1Screen);
+        });
+
+        preGame2Btn.addEventListener('click', () => {
+            openFullscreen();
+            showScreen(preGame2Screen);
+        });
+
+        game1Btn.addEventListener('click', startGame1);
+        game2Btn.addEventListener('click', startGame2);
+
+        backToMain1.addEventListener('click', () => {
+            clearInterval(timer1);
+            showScreen(homeScreen);
+        });
+
+        backToMain2.addEventListener('click', () => {
+            clearInterval(timer2);
+            showScreen(homeScreen);
+        });
+
+        backFromResults1.addEventListener('click', () => {
+            showScreen(homeScreen);
+        });
+
+        backFromResults2.addEventListener('click', () => {
+            showScreen(homeScreen);
+        });
+
+        // Initialize
+        showScreen(splashScreen);
+
+        function triggerConfetti() {
+    //   document.getElementById("forRef").textContent = "";
+      confetti({
+        particleCount: 150,
+        spread: 200,
+        origin: { y: 0.6 }
+      });
+    }
+    </script>
+</body>
+</html>
