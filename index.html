@@ -794,7 +794,7 @@
             <div class="logo">
                 <div class="info-item">
                     <span>Time:</span>
-                    <span id="time2">10</span>s
+                    <span id="time2">20</span>s
                     <div class="timer-bar">
                         <div id="timer-progress2" class="timer-progress"></div>
                     </div>
@@ -805,7 +805,7 @@
         <div class="game-info-bar2">
             <div class="info-item">
                 <span>Question:</span>
-                <span id="current-question2">1</span>/<span id="total-questions2">10</span>
+                <span id="current-question2">1</span>/<span id="total-questions2">20</span>
             </div>
             <div class="info-item">
                 <span>Score:</span>
@@ -837,7 +837,7 @@
         <div class="game-container results-container">
             
             <div class="results-summary">
-                <p>Your Score: <span id="final-score1">0</span>/<span id="final-total1">10</span></p>
+                <p>Your Score: <span id="final-score1">0</span>/<span id="final-total1">20</span></p>
             </div>
             <div class="results-table-container">
                 <table id="results-table1" class="results-table">
@@ -869,7 +869,7 @@
         <div class="game-container results-container" style=" background: linear-gradient(to right, #c1e62d, #0ca128);">
             
             <div class="results-summary">
-                <p>Your Score: <span id="final-score2">0</span>/<span id="final-total2">10</span></p>
+                <p>Your Score: <span id="final-score2">0</span>/<span id="final-total2">20</span></p>
             </div>
             <div class="results-table-container" >
                 <table id="results-table2" class="results-table">
@@ -1003,8 +1003,8 @@ const scienceQuestions = [
         let score2 = 0;
         let timer1;
         let timer2;
-        let timeLeft1 = 10;
-        let timeLeft2 = 10;
+        let timeLeft1 = 20;
+        let timeLeft2 = 20;
 
         let userAnswers1 = [];
         let userAnswers2 = [];
@@ -1088,7 +1088,7 @@ const scienceQuestions = [
     });
 
     // Reset and start timer
-    timeLeft1 = 10;
+    timeLeft1 = 20;
     document.getElementById('time1').textContent = timeLeft1;
     document.getElementById('timer-progress1').style.width = '100%';
 
@@ -1099,7 +1099,7 @@ const scienceQuestions = [
         function updateTimer1() {
             timeLeft1--;
             document.getElementById('time1').textContent = timeLeft1;
-            const percentage = (timeLeft1 / 10) * 100;
+            const percentage = (timeLeft1 / 20) * 100;
             document.getElementById('timer-progress1').style.width = percentage + '%';
             
             if (timeLeft1 <= 0) {
@@ -1218,7 +1218,7 @@ const scienceQuestions = [
     });
 
     // Reset and start timer
-    timeLeft2 = 10;
+    timeLeft2 = 20;
     document.getElementById('time2').textContent = timeLeft2;
     document.getElementById('timer-progress2').style.width = '100%';
 
@@ -1229,7 +1229,7 @@ const scienceQuestions = [
         function updateTimer2() {
             timeLeft2--;
             document.getElementById('time2').textContent = timeLeft2;
-            const percentage = (timeLeft2 / 10) * 100;
+            const percentage = (timeLeft2 / 20) * 100;
             document.getElementById('timer-progress2').style.width = percentage + '%';
             
             if (timeLeft2 <= 0) {
